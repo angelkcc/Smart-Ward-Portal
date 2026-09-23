@@ -1,11 +1,13 @@
 import express, { Request, Response } from "express";
 
 //importing routes
+import routes from "./routes/index.routes";
 
 
 
 //express app
 const app = express();
+app.use(express.json({limit:"10mb"}));
 
 //using middlewares
 
@@ -22,6 +24,7 @@ app.get("/",(_:Request, res:Response)=>{
 });
 
 //using routes
+app.use("/api/v1/",routes);
 
 
 //path not found
