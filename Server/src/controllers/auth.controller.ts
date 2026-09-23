@@ -1,5 +1,6 @@
 import User from "../models/user.model";
 import AppError from "../utils/appError.utlis";
+import { hashPassword } from "../utils/bcrypt.utlis";
 import { catchAsync } from "../utils/catchAsync.utlis";
 
 //register
@@ -32,6 +33,10 @@ export const register= catchAsync(async(req,res)=>{
         password,
         phone_number,
     });
+
+    //password hashing
+    const hash= await hashPassword(password);
+    user.password=hash;
 
     //save user to database
     await user.save();
