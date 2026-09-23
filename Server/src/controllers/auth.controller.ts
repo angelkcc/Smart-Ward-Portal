@@ -1,6 +1,6 @@
 import User from "../models/user.model";
 import AppError from "../utils/appError.utlis";
-import { hashPassword } from "../utils/bcrypt.utlis";
+import { comparePassword, hashPassword } from "../utils/bcrypt.utlis";
 import { catchAsync } from "../utils/catchAsync.utlis";
 
 //register
@@ -54,5 +54,40 @@ export const register= catchAsync(async(req,res)=>{
 
 
 //login
+export const login= catchAsync(async(req,res)=>{
+    const {email,password}= req.body;
+    if(!email)
+    {
+        throw new AppError("Email is required", 400);
+    }
+    if(!password)
+    {
+        throw new AppError("Password is required", 400);
+    }
+    //find user by email
+    const user= await User.findOne({email}).select("+password");
+
+    if(!user)
+    {
+        throw new AppError("Invalid email or password", 401);
+    }
+    //compare password
+    const isPasswordMatched= await comparePassword(password,user.password);
+    
+    if(!isPasswordMatched)
+    {
+        throw new AppError("Invalid email or password", 401);
+    }
+
+    const { password: _, ...rest } = user.toObject();
+
+    //send response
+    res.status(200).json({
+        message:"User logged in successfully",
+        statusCode:200,
+        data:rest
+    });
+
+});
 
 
