@@ -2,6 +2,7 @@ import User from "../models/user.model";
 import AppError from "../utils/appError.utlis";
 import { comparePassword, hashPassword } from "../utils/bcrypt.utlis";
 import { catchAsync } from "../utils/catchAsync.utlis";
+import { generateJwtToken } from "../utils/jwt.utlis";
 
 //register
 export const register= catchAsync(async(req,res)=>{
@@ -78,6 +79,13 @@ export const login= catchAsync(async(req,res)=>{
     {
         throw new AppError("Invalid email or password", 401);
     }
+
+    //access token generation
+    const accessToken= generateJwtToken({
+        _id:user._id,
+        role:user.role,
+        email:user.email,
+    })
 
     const { password: _, ...rest } = user.toObject();
 
