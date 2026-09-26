@@ -1,8 +1,10 @@
+import ENV_CONFIG from "../config/env.config";
 import User from "../models/user.model";
 import AppError from "../utils/appError.utlis";
 import { comparePassword, hashPassword } from "../utils/bcrypt.utlis";
 import { catchAsync } from "../utils/catchAsync.utlis";
 import { generateJwtToken } from "../utils/jwt.utlis";
+import sendResponse from "../utils/SendResponse.utlis";
 
 //register
 export const register= catchAsync(async(req,res)=>{
@@ -81,20 +83,31 @@ export const login= catchAsync(async(req,res)=>{
     }
 
     //access token generation
-    const accessToken= generateJwtToken({
+    const access_token= generateJwtToken({
         _id:user._id,
         role:user.role,
         email:user.email,
     })
 
+    //set cookie header
+    res.cookie("accessToken", access_token,{
+        secure:ENV_CONFIG.NODE_ENV==="development"?false:true,
+        httpOnly:ENV_CONFIG.NODE_ENV==="development"?false:true,
+        maxAge:ENV_CONFIG.COOKIE_EXPIRES_IN*24*60*60*1000,
+        sameSite:ENV_CONFIG.NODE_ENV==="development"?"lax":"none",
+    })
+
     const { password: _, ...rest } = user.toObject();
 
     //send response
-    res.status(200).json({
-        message:"User logged in successfully",
-        statusCode:200,
-        data:rest
-    });
+   sendResponse(res,{
+    message:"User logged in successfully",
+    data:{
+        user:rest,
+        access_token
+    },
+    statusCode:201
+   });
 
 });
 

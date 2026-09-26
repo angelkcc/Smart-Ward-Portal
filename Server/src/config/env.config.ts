@@ -8,5 +8,9 @@ const ENV_CONFIG ={
     //JWT
     JWT_SECRET: process.env.JWT_SECRET !!,
     JWT_EXPIRES_IN:process.env.JWT_EXPIRES_IN ?? "7d",
+
+    //COOKIE
+    COOKIE_EXPIRES_IN: Number(process.env.COOKIE_EXPIRES_IN) ?? "7d",
 }
+
 export default ENV_CONFIG;
