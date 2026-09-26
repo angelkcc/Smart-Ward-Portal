@@ -7,6 +7,7 @@ export const authenticate=(roles?:Role[])=>{
     return (req:Request, res:Response, next:NextFunction)=>{
         try{
             //get access token
+            console.log("COOKIES RECEIVED:", req.cookies);
             const token= req.cookies["access_token"];
             if(!token)
             {

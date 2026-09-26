@@ -4,14 +4,17 @@ import express, { NextFunction, Request, Response } from "express";
 import routes from "./routes/index.routes";
 import errorHandler from "./middlewares/errorHandler.middleware";
 import AppError from "./utils/appError.utlis";
+import cookieParser from "cookie-parser";
 
 
 
 //express app
 const app = express();
-app.use(express.json({limit:"10mb"}));
 
 //using middlewares
+app.use(express.json({limit:"10mb"}));
+app.use(cookieParser());
+
 
 
 

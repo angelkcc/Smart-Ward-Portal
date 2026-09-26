@@ -1,13 +1,13 @@
 import z from "zod";
 //login
-export const loginValidatorSchema= z.object({
+/*export const loginValidatorSchema= z.object({
     body:z.object({
     email:z.email("email is required"),
     password: z.string("password is required").regex(/[A-Z]/,"password must contain at least one uppercase letter")
     .regex(/[a-z]/,"password must contain at least one lowercase letter")
     .regex(/[^A-Za-z0-9]/,"password must contain at least one special character").min(6,"password must be at least 6 characters long")
     }),
-});
+});*/
 
 //register
 export const registerValidatorSchema= z.object({

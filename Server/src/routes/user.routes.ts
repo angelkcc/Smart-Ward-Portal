@@ -13,3 +13,5 @@ router.get("/profile", authenticate(),getProfile);
 
 //get user by id- admin only
 router.get("/:id", authenticate([Role.ADMIN]),getById);
+
+export default router;

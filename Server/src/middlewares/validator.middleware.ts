@@ -5,7 +5,7 @@ import AppError from "../utils/appError.utlis";
 export const validate= (schema:ZodObject)=>{
     return (req:Request,res:Response,next:NextFunction)=>{
         const result= schema.safeParse({
-            body:req.body,
+            body:req.body || {},
             query:req.query,
             params:req.params
         });
@@ -22,6 +22,7 @@ export const validate= (schema:ZodObject)=>{
         req.body= result.data.body;
         Object.assign(req.query,result.data.query);
         Object.assign(req.params,result.data.params);
+        
         next();
 
     };

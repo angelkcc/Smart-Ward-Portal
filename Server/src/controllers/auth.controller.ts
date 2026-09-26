@@ -7,108 +7,109 @@ import { generateJwtToken } from "../utils/jwt.utlis";
 import sendResponse from "../utils/SendResponse.utlis";
 
 //register
-export const register= catchAsync(async(req,res)=>{
-    const {full_name,email,password,phone_number}=req.body;
+export const register = catchAsync(async (req, res) => {
+  const { full_name, email, password, phone_number } = req.body;
 
-    if(!full_name)
-    {
-        throw new AppError("Full name is required", 400);
-    }
-    if(!email)
-    {
-        throw new AppError("Email is required", 400);
-    }
-    if(!password)
-    {
-        throw new AppError("Password is required", 400);
-    }
-    if(password.length<6)
-    {
-        throw new AppError("Password must be at least 6 characters long", 400);
-    }
-    if(!phone_number)
-    {
-        throw new AppError("Phone number is required", 400);
-    }
-    const user = new User({
-        full_name,
-        email,
-        password,
-        phone_number,
-    });
+  if (!full_name) {
+    throw new AppError("Full name is required", 400);
+  }
+  if (!email) {
+    throw new AppError("Email is required", 400);
+  }
+  if (!password) {
+    throw new AppError("Password is required", 400);
+  }
+  if (password.length < 6) {
+    throw new AppError("Password must be at least 6 characters long", 400);
+  }
+  if (!phone_number) {
+    throw new AppError("Phone number is required", 400);
+  }
+  const user = new User({
+    full_name,
+    email,
+    password,
+    phone_number,
+  });
 
-    //password hashing
-    const hash= await hashPassword(password);
-    user.password=hash;
+  //password hashing
+  const hash = await hashPassword(password);
+  user.password = hash;
 
-    //save user to database
-    await user.save();
+  //save user to database
+  await user.save();
 
-     const { password: _, ...rest } = user.toObject();
+  const { password: _, ...rest } = user.toObject();
 
-    //send response
-    res.status(201).json({
-        statusCode:201,
-        message:"User registered successfully",
-        data:rest
-    });
+  //send response
+  res.status(201).json({
+    statusCode: 201,
+    message: "User registered successfully",
+    data: rest,
+  });
 });
-
-
 
 //login
-export const login= catchAsync(async(req,res)=>{
-    const {email,password}= req.body;
-    if(!email)
-    {
-        throw new AppError("Email is required", 400);
-    }
-    if(!password)
-    {
-        throw new AppError("Password is required", 400);
-    }
-    //find user by email
-    const user= await User.findOne({email}).select("+password");
+export const login = catchAsync(async (req, res) => {
+  const { email, password } = req.body;
+  if (!email) {
+    throw new AppError("Email is required", 400);
+  }
+  if (!password) {
+    throw new AppError("Password is required", 400);
+  }
+  //find user by email
+  const user = await User.findOne({ email }).select("+password");
 
-    if(!user)
-    {
-        throw new AppError("Invalid email or password", 401);
-    }
-    //compare password
-    const isPasswordMatched= await comparePassword(password,user.password);
-    
-    if(!isPasswordMatched)
-    {
-        throw new AppError("Invalid email or password", 401);
-    }
+  if (!user) {
+    throw new AppError("Invalid email or password", 401);
+  }
+  //compare password
+  const isPasswordMatched = await comparePassword(password, user.password);
 
-    //access token generation
-    const access_token= generateJwtToken({
-        _id:user._id,
-        role:user.role,
-        email:user.email,
-    })
+  if (!isPasswordMatched) {
+    throw new AppError("Invalid email or password", 401);
+  }
 
-    //set cookie header
-    res.cookie("accessToken", access_token,{
-        secure:ENV_CONFIG.NODE_ENV==="development"?false:true,
-        httpOnly:ENV_CONFIG.NODE_ENV==="development"?false:true,
-        maxAge:ENV_CONFIG.COOKIE_EXPIRES_IN*24*60*60*1000,
-        sameSite:ENV_CONFIG.NODE_ENV==="development"?"lax":"none",
-    })
+  //access token generation
+  const access_token = generateJwtToken({
+    _id: user._id,
+    role: user.role,
+    email: user.email,
+  });
 
-    const { password: _, ...rest } = user.toObject();
+  //set cookie header
+  res.cookie("access_token", access_token, {
+    secure: ENV_CONFIG.NODE_ENV === "development" ? false : true,
+    httpOnly: ENV_CONFIG.NODE_ENV === "development" ? false : true,
+    maxAge: ENV_CONFIG.COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+    sameSite: ENV_CONFIG.NODE_ENV === "development" ? "lax" : "none",
+  });
 
-    //send response
-   sendResponse(res,{
-    message:"User logged in successfully",
-    data:{
-        user:rest,
-        access_token
+  const { password: _, ...rest } = user.toObject();
+
+  //send response
+  sendResponse(res, {
+    message: "User logged in successfully",
+    data: {
+      user: rest,
+      access_token,
     },
-    statusCode:201
-   });
-
+    statusCode: 201,
+  });
 });
 
+//LOGOUT
+export const logout = catchAsync(async (req, res) => {
+  res.clearCookie("access_token", {
+    secure: ENV_CONFIG.NODE_ENV === "development" ? false : true,
+    httpOnly: ENV_CONFIG.NODE_ENV === "development" ? false : true,
+    sameSite: ENV_CONFIG.NODE_ENV === "development" ? "lax" : "none",
+  });
 
+  sendResponse(res, {
+    message: "user logged out successfully",
+    data: null,
+    statusCode: 200,
+  });
+});
