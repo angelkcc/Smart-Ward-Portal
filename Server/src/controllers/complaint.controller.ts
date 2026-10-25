@@ -1,11 +1,14 @@
 
 import mongoose from "mongoose";
 import Complaint from "../models/complaint.model";
+import Department from "../models/department.model";
 import AppError from "../utils/appError.utlis";
 import { catchAsync } from "../utils/catchAsync.utlis";
 import sendResponse from "../utils/SendResponse.utlis";
-import { ComplaintStatus } from "../types/complaint.types";
 import { Role } from "../types/enum.types";
+import {
+    ComplaintStatus,
+} from "../types/complaint.types";
 
 // CREATE COMPLAINT
 export const createComplaint = catchAsync(async (req, res) => {
@@ -17,22 +20,17 @@ export const createComplaint = catchAsync(async (req, res) => {
         image,
     } = req.body;
 
-    // Get the logged-in user's ID
-    const { _id } = req.user;
-
-    const complaint = new Complaint({
+    const complaint = await Complaint.create({
         title,
         description,
         category,
         location,
         image,
-        created_by: _id,
+        created_by: req.user._id,
     });
 
-    await complaint.save();
-
     sendResponse(res, {
-        message: "Complaint submitted successfully",
+        message: "Complaint created successfully",
         data: complaint,
         statusCode: 201,
     });
@@ -40,8 +38,6 @@ export const createComplaint = catchAsync(async (req, res) => {
 
 // GET ALL COMPLAINTS
 export const getAllComplaints = catchAsync(async (req, res) => {
-    // Citizens can only see their own complaints.
-    // Admins can see all complaints.
     const filter =
         req.user.role === Role.ADMIN
             ? {}
@@ -50,6 +46,7 @@ export const getAllComplaints = catchAsync(async (req, res) => {
     const complaints = await Complaint.find(filter)
         .populate("created_by", "full_name email")
         .populate("assigned_to", "full_name email")
+        .populate("department")
         .sort({ createdAt: -1 });
 
     sendResponse(res, {
@@ -69,13 +66,13 @@ export const getComplaintById = catchAsync(async (req, res) => {
 
     const complaint = await Complaint.findById(id)
         .populate("created_by", "full_name email")
-        .populate("assigned_to", "full_name email");
+        .populate("assigned_to", "full_name email")
+        .populate("department");
 
     if (!complaint) {
         throw new AppError("Complaint not found", 404);
     }
 
-    // Citizens may only see complaints they submitted.
     if (
         req.user.role !== Role.ADMIN &&
         complaint.created_by._id.toString() !== req.user._id.toString()
@@ -86,6 +83,51 @@ export const getComplaintById = catchAsync(async (req, res) => {
     sendResponse(res, {
         message: "Complaint fetched successfully",
         data: complaint,
+        statusCode: 200,
+    });
+});
+
+// ASSIGN COMPLAINT TO A DEPARTMENT
+export const assignComplaintDepartment = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const { department_id } = req.body;
+
+    if (!mongoose.isValidObjectId(id)) {
+        throw new AppError("Invalid complaint ID", 400);
+    }
+
+    if (!mongoose.isValidObjectId(department_id)) {
+        throw new AppError("Valid department_id is required", 400);
+    }
+
+    const complaint = await Complaint.findById(id);
+
+    if (!complaint) {
+        throw new AppError("Complaint not found", 404);
+    }
+
+    const department = await Department.findById(department_id);
+
+    if (!department) {
+        throw new AppError("Department not found", 404);
+    }
+
+    if (!department.active) {
+        throw new AppError("Cannot assign a complaint to an inactive department", 400);
+    }
+
+    complaint.department = department._id as mongoose.Types.ObjectId;
+
+    await complaint.save();
+
+    const updatedComplaint = await Complaint.findById(complaint._id)
+        .populate("created_by", "full_name email")
+        .populate("assigned_to", "full_name email")
+        .populate("department");
+
+    sendResponse(res, {
+        message: "Complaint assigned to department successfully",
+        data: updatedComplaint,
         statusCode: 200,
     });
 });
@@ -110,7 +152,6 @@ export const updateComplaintStatus = catchAsync(async (req, res) => {
     }
 
     complaint.status = status;
-
     await complaint.save();
 
     sendResponse(res, {
@@ -120,7 +161,7 @@ export const updateComplaintStatus = catchAsync(async (req, res) => {
     });
 });
 
-// ASSIGN COMPLAINT TO AN OFFICIAL
+// ASSIGN COMPLAINT TO A USER
 export const assignComplaint = catchAsync(async (req, res) => {
     const { id } = req.params;
     const { assigned_to } = req.body;
@@ -129,8 +170,8 @@ export const assignComplaint = catchAsync(async (req, res) => {
         throw new AppError("Invalid complaint ID", 400);
     }
 
-    if (!assigned_to || !mongoose.isValidObjectId(assigned_to)) {
-        throw new AppError("A valid assigned_to user ID is required", 400);
+    if (!mongoose.isValidObjectId(assigned_to)) {
+        throw new AppError("Valid assigned_to user ID is required", 400);
     }
 
     const complaint = await Complaint.findById(id);
@@ -140,15 +181,18 @@ export const assignComplaint = catchAsync(async (req, res) => {
     }
 
     complaint.assigned_to = new mongoose.Types.ObjectId(assigned_to);
-
-    // Move it to ASSIGNED when an official is assigned.
     complaint.status = ComplaintStatus.ASSIGNED;
 
     await complaint.save();
 
+    const updatedComplaint = await Complaint.findById(complaint._id)
+        .populate("created_by", "full_name email")
+        .populate("assigned_to", "full_name email")
+        .populate("department");
+
     sendResponse(res, {
-        message: "Complaint assigned successfully",
-        data: complaint,
+        message: "Complaint assigned to user successfully",
+        data: updatedComplaint,
         statusCode: 200,
     });
 });

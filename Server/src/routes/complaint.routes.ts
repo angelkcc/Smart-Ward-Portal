@@ -2,6 +2,7 @@
 import express from "express";
 import {
     assignComplaint,
+    assignComplaintDepartment,
     createComplaint,
     deleteComplaint,
     getAllComplaints,
@@ -13,34 +14,30 @@ import { Role } from "../types/enum.types";
 
 const router = express.Router();
 
-// Get complaints: citizens see their own; admins see all.
+// Authenticated users
 router.get("/", authenticate(), getAllComplaints);
-
-// Get one complaint: citizens can see their own; admins can see all.
 router.get("/:id", authenticate(), getComplaintById);
-
-// Submit a complaint: authenticated users.
 router.post("/", authenticate(), createComplaint);
 
-// Update complaint status: admin only.
+// Admin-only actions
+router.patch(
+    "/:id/department",
+    authenticate([Role.ADMIN]),
+    assignComplaintDepartment,
+);
+
 router.patch(
     "/:id/status",
     authenticate([Role.ADMIN]),
     updateComplaintStatus,
 );
 
-// Assign complaint to an official: admin only.
 router.patch(
     "/:id/assign",
     authenticate([Role.ADMIN]),
     assignComplaint,
 );
 
-// Delete complaint: admin only.
-router.delete(
-    "/:id",
-    authenticate([Role.ADMIN]),
-    deleteComplaint,
-);
+router.delete("/:id", authenticate([Role.ADMIN]), deleteComplaint);
 
 export default router;

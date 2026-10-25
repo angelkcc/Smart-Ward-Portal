@@ -4,6 +4,7 @@ import Department from "../models/department.model";
 import AppError from "../utils/appError.utlis";
 import { catchAsync } from "../utils/catchAsync.utlis";
 import sendResponse from "../utils/SendResponse.utlis";
+import Complaint from "../models/complaint.model";
 
 // CREATE DEPARTMENT
 export const createDepartment = catchAsync(async (req, res) => {
@@ -136,6 +137,7 @@ export const updateDepartment = catchAsync(async (req, res) => {
 });
 
 // DELETE DEPARTMENT
+
 export const deleteDepartment = catchAsync(async (req, res) => {
     const { id } = req.params;
 
@@ -147,6 +149,17 @@ export const deleteDepartment = catchAsync(async (req, res) => {
 
     if (!department) {
         throw new AppError("Department not found", 404);
+    }
+
+    const hasComplaints = await Complaint.exists({
+        department: department._id,
+    });
+
+    if (hasComplaints) {
+        throw new AppError(
+            "Cannot delete this department because complaints are assigned to it",
+            409,
+        );
     }
 
     await Department.findByIdAndDelete(id);
