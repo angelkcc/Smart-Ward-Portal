@@ -1,0 +1,10 @@
+
+export enum DepartmentCategory {
+    ROADS = "ROADS",
+    WATER_SUPPLY = "WATER_SUPPLY",
+    SANITATION = "SANITATION",
+    DRAINAGE = "DRAINAGE",
+    ELECTRICITY = "ELECTRICITY",
+    ADMINISTRATION = "ADMINISTRATION",
+    OTHER = "OTHER",
+}
