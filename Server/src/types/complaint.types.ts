@@ -1,0 +1,18 @@
+
+export enum ComplaintCategory {
+    ROADS = "ROADS",
+    WATER_SUPPLY = "WATER_SUPPLY",
+    SANITATION = "SANITATION",
+    DRAINAGE = "DRAINAGE",
+    STREETLIGHTS = "STREETLIGHTS",
+    ELECTRICITY = "ELECTRICITY",
+    OTHER = "OTHER",
+}
+
+export enum ComplaintStatus {
+    PENDING = "PENDING",
+    ASSIGNED = "ASSIGNED",
+    IN_PROGRESS = "IN_PROGRESS",
+    RESOLVED = "RESOLVED",
+    REJECTED = "REJECTED",
+}
