@@ -11,7 +11,7 @@ import type { ApiEnvelope } from "@/types";
  * Only set NEXT_PUBLIC_API_URL if you deliberately point at another origin
  * (the backend would then need CORS enabled for credentials).
  */
-const API_BASE = (process.env.NEXT_PUBLIC_API_URL ?? "/api/v1").replace(
+const API_BASE = (process.env.NEXT_PUBLIC_BASE_URL ?? "/api/v1").replace(
   /\/$/,
   "",
 );

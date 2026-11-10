@@ -3,7 +3,8 @@ import "dotenv/config";
 const ENV_CONFIG ={
     NODE_ENV:process.env.NODE_ENV ?? "development",
     PORT: Number(process.env.PORT) || 8000,
-    DB_URI: process.env.DB_URI ?? "",
+    DB_URI: process.env.DB_URI!!,
+    ORIGINS: process.env.ORIGINS!!,
 
     //JWT
     JWT_SECRET: process.env.JWT_SECRET !!,

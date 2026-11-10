@@ -5,18 +5,32 @@ import routes from "./routes/index.routes";
 import errorHandler from "./middlewares/errorHandler.middleware";
 import AppError from "./utils/appError.utlis";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+import ENV_CONFIG from "./config/env.config";
 
 
 
 //express app
 const app = express();
+const origins= ENV_CONFIG.ORIGINS
+      .split(",")
+      .map((origin) => origin.trim())
+      .filter(Boolean);
+       console.log(origins);
+
 
 //using middlewares
 app.use(express.json({limit:"10mb"}));
 app.use(cookieParser());
 
 
-
+//cors
+app.use(
+    cors({
+        origin:origins,
+        credentials:true,
+    })
+)
 
 //health check route
 app.get("/",(_:Request, res:Response)=>{
