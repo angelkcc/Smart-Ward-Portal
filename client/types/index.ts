@@ -149,3 +149,47 @@ export interface DepartmentInput {
   /** Only the update endpoint reads this field. */
   active?: boolean;
 }
+/* ---------- PROJECT TYPES ---------- */
+
+export const PROJECT_STATUSES = [
+  "PLANNED",
+  "ONGOING",
+  "COMPLETED",
+  "ON_HOLD",
+] as const;
+
+export type ProjectStatus = (typeof PROJECT_STATUSES)[number];
+
+export interface Project {
+  _id: string;
+  title: string;
+  description: string;
+  category: string;
+  location: string;
+  budget?: number;
+  status: ProjectStatus;
+  progress: number;
+  start_date?: string;
+  expected_completion_date?: string;
+  image_url?: string;
+  published: boolean;
+  created_by: UserRef | string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/* ---------- PROJECT REQUEST BODY ---------- */
+
+export interface ProjectInput {
+  title: string;
+  description: string;
+  category: string;
+  location: string;
+  budget?: number;
+  status?: ProjectStatus;
+  progress?: number;
+  start_date?: string;
+  expected_completion_date?: string;
+  image_url?: string;
+  published?: boolean;
+}

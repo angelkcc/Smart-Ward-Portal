@@ -1,36 +1,28 @@
-import type { Metadata } from "next";
-import { ButtonLink } from "@/components/ui/Button";
-import { EmptyState } from "@/components/ui/Feedback";
-import { Container, PageHeader } from "@/components/ui/Layout";
 
-export const metadata: Metadata = { title: "Development projects" };
+import { ProjectsList } from "@/components/projects/ProjectsList";
+import { Container } from "@/components/ui/Layout";
 
-/**
- * The backend has no development-project model or endpoint yet, so this page
- * is an honest placeholder. When a project API exists, replace the empty
- * state with a list fetched through a new `project.service.ts`.
- */
 export default function ProjectsPage() {
   return (
-    <Container className="py-10">
-      <PageHeader
-        eyebrow="Transparency"
-        title="Development projects"
-        description="Follow ward development work and how it is progressing."
-      />
-      <EmptyState
-        icon="hammer"
-        title="No project updates published yet"
-        description="Project updates will appear here when the ward publishes them. Until then, please check the notices or ask at the ward office."
-        action={
-          <div className="flex flex-wrap justify-center gap-3">
-            <ButtonLink href="/notices">Read notices</ButtonLink>
-            <ButtonLink href="/services" variant="secondary">
-              View services
-            </ButtonLink>
-          </div>
-        }
-      />
-    </Container>
+    <section className="py-12">
+      <Container>
+        <div className="mb-10">
+          <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-blue-900">
+            Ward Development
+          </p>
+
+          <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">
+            Our Projects
+          </h1>
+
+          <p className="mt-3 max-w-2xl text-slate-600">
+            Explore development projects and initiatives being carried out
+            for the betterment of our community.
+          </p>
+        </div>
+
+        <ProjectsList />
+      </Container>
+    </section>
   );
 }

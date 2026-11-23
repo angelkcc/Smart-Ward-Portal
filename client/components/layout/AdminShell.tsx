@@ -15,6 +15,7 @@ const ADMIN_NAV: Array<{ href: string; label: string; icon: IconName }> = [
   { href: "/admin/complaints", label: "Complaints", icon: "chat" },
   { href: "/admin/departments", label: "Departments", icon: "building" },
   { href: "/admin/notices", label: "Notices", icon: "bell" },
+  { href: "/admin/projects", label: "Projects", icon: "document" },
 ];
 
 function isActive(pathname: string, href: string) {
