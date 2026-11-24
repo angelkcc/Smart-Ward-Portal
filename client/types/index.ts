@@ -193,3 +193,4 @@ export interface ProjectInput {
   image_url?: string;
   published?: boolean;
 }
+
