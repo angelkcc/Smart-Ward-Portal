@@ -12,6 +12,11 @@ const ENV_CONFIG ={
 
     //COOKIE
     COOKIE_EXPIRES_IN: Number(process.env.COOKIE_EXPIRES_IN) ?? "7d",
+
+    //CLOUDINARY
+    CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME!!,
+    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY!!,
+    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET!!,
 }
 
 export default ENV_CONFIG;

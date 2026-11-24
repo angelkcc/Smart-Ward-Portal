@@ -9,16 +9,34 @@ import { Role } from "../types/enum.types";
 import {
     ComplaintStatus,
 } from "../types/complaint.types";
+import {
+    uploadFileToCloudinary,
+    deleteFileFromCloudinary,
+} from "../utils/cloudinary.utlis";
 
-// CREATE COMPLAINT
+
+// CREATE COMPLAINT - CITIZEN
 export const createComplaint = catchAsync(async (req, res) => {
     const {
         title,
         description,
         category,
         location,
-        image,
     } = req.body;
+
+    let image: string | null = null;
+    let image_public_id: string | null = null;
+
+    // Upload complaint image if provided
+    if (req.file) {
+        const uploadedImage = await uploadFileToCloudinary(
+            req.file,
+            "/complaints"
+        );
+
+        image = uploadedImage.path;
+        image_public_id = uploadedImage.public_id;
+    }
 
     const complaint = await Complaint.create({
         title,
@@ -26,6 +44,7 @@ export const createComplaint = catchAsync(async (req, res) => {
         category,
         location,
         image,
+        image_public_id,
         created_by: req.user._id,
     });
 
@@ -35,6 +54,7 @@ export const createComplaint = catchAsync(async (req, res) => {
         statusCode: 201,
     });
 });
+
 
 // GET ALL COMPLAINTS
 export const getAllComplaints = catchAsync(async (req, res) => {
@@ -197,6 +217,7 @@ export const assignComplaint = catchAsync(async (req, res) => {
     });
 });
 
+
 // DELETE COMPLAINT
 export const deleteComplaint = catchAsync(async (req, res) => {
     const { id } = req.params;
@@ -211,6 +232,11 @@ export const deleteComplaint = catchAsync(async (req, res) => {
         throw new AppError("Complaint not found", 404);
     }
 
+    // Delete complaint image from Cloudinary
+    if (complaint.image_public_id) {
+        await deleteFileFromCloudinary(complaint.image_public_id);
+    }
+
     await Complaint.findByIdAndDelete(id);
 
     sendResponse(res, {
@@ -219,3 +245,4 @@ export const deleteComplaint = catchAsync(async (req, res) => {
         statusCode: 200,
     });
 });
+

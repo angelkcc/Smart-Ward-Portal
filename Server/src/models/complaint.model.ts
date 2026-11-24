@@ -11,6 +11,7 @@ interface IComplaint extends Document {
     category: ComplaintCategory;
     location: string;
     image?: string | null;
+    image_public_id?: string | null;
     status: ComplaintStatus;
     created_by: mongoose.Types.ObjectId;
     assigned_to?: mongoose.Types.ObjectId | null;
@@ -45,6 +46,11 @@ const complaintSchema = new mongoose.Schema<IComplaint>(
             type: String,
             default: null,
         },
+
+        image_public_id: {
+            type: String,
+            default: null,
+       },
         status: {
             type: String,
             enum: Object.values(ComplaintStatus),

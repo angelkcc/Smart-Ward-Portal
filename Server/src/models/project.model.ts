@@ -11,8 +11,10 @@ interface IProject extends Document {
     start_date?: Date;
     expected_completion_date?: Date;
     image_url?: string;
+    image_public_id?: string;
     published: boolean;
     created_by: mongoose.Types.ObjectId;
+    
 }
 
 const projectSchema = new mongoose.Schema<IProject>(
@@ -71,8 +73,14 @@ const projectSchema = new mongoose.Schema<IProject>(
         },
 
         image_url: {
-            type: String,
-            trim: true,
+        type: String,
+        trim: true,
+        default: null,
+        },
+
+        image_public_id: {
+        type: String,
+        default: null,
         },
 
         published: {

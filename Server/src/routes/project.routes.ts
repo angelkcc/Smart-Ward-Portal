@@ -9,8 +9,10 @@ import {
 } from "../controllers/project.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 import { Role } from "../types/enum.types";
+import multerFileUploader from "../middlewares/multer.middleware";
 
 const router = express.Router();
+const upload=multerFileUploader();
 
 // GET ALL PUBLISHED PROJECTS - PUBLIC
 router.get("/", getAllProjects);
@@ -23,10 +25,10 @@ router.get("/admin/all", authenticate([Role.ADMIN]), getAllProjectsAdmin);
 router.get("/:id", getProjectById);
 
 // CREATE PROJECT - ADMIN
-router.post("/", authenticate([Role.ADMIN]), createProject);
+router.post("/", authenticate([Role.ADMIN]),upload.single("image"), createProject);
 
 // UPDATE PROJECT - ADMIN
-router.put("/:id", authenticate([Role.ADMIN]), updateProject);
+router.put("/:id", authenticate([Role.ADMIN]), upload.single("image"), updateProject);
 
 // DELETE PROJECT - ADMIN
 router.delete("/:id", authenticate([Role.ADMIN]), deleteProject);

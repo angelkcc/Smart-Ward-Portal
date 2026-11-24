@@ -3,6 +3,11 @@ import AppError from "../utils/appError.utlis";
 import { catchAsync } from "../utils/catchAsync.utlis";
 import sendResponse from "../utils/SendResponse.utlis";
 import { ProjectStatus } from "../types/project.types";
+import {
+    uploadFileToCloudinary,
+    deleteFileFromCloudinary,
+} from "../utils/cloudinary.utlis";
+
 
 // CREATE PROJECT - ADMIN
 export const createProject = catchAsync(async (req, res) => {
@@ -16,7 +21,6 @@ export const createProject = catchAsync(async (req, res) => {
         progress,
         start_date,
         expected_completion_date,
-        image_url,
         published,
     } = req.body;
 
@@ -39,6 +43,19 @@ export const createProject = catchAsync(async (req, res) => {
     ) {
         throw new AppError("Progress must be between 0 and 100", 400);
     }
+     let image_url: string | undefined;
+     let image_public_id: string | undefined;
+
+    // Upload project image if provided
+    if (req.file) {
+        const uploadedImage = await uploadFileToCloudinary(
+            req.file,
+            "/projects"
+        );
+
+        image_url = uploadedImage.path;
+        image_public_id = uploadedImage.public_id;
+    }
 
     const project = new Project({
         title,
@@ -51,6 +68,7 @@ export const createProject = catchAsync(async (req, res) => {
         start_date,
         expected_completion_date,
         image_url,
+        image_public_id,
         published,
         created_by: _id,
     });
@@ -63,6 +81,7 @@ export const createProject = catchAsync(async (req, res) => {
         statusCode: 201,
     });
 });
+
 
 // GET ALL PUBLISHED PROJECTS - PUBLIC
 export const getAllProjects = catchAsync(async (req, res) => {
@@ -112,6 +131,7 @@ export const getProjectById = catchAsync(async (req, res) => {
     });
 });
 
+
 // UPDATE PROJECT - ADMIN
 export const updateProject = catchAsync(async (req, res) => {
     const { id } = req.params;
@@ -126,7 +146,6 @@ export const updateProject = catchAsync(async (req, res) => {
         progress,
         start_date,
         expected_completion_date,
-        image_url,
         published,
     } = req.body;
 
@@ -165,8 +184,23 @@ export const updateProject = catchAsync(async (req, res) => {
     if (expected_completion_date !== undefined) {
         project.expected_completion_date = expected_completion_date;
     }
-    if (image_url !== undefined) project.image_url = image_url;
     if (published !== undefined) project.published = published;
+
+    // Replace project image if a new one is uploaded
+    if (req.file) {
+        const uploadedImage = await uploadFileToCloudinary(
+            req.file,
+            "/projects"
+        );
+
+        // Delete previous image only after new upload succeeds
+        if (project.image_public_id) {
+            await deleteFileFromCloudinary(project.image_public_id);
+        }
+
+        project.image_url = uploadedImage.path;
+        project.image_public_id = uploadedImage.public_id;
+    }
 
     await project.save();
 
@@ -177,6 +211,8 @@ export const updateProject = catchAsync(async (req, res) => {
     });
 });
 
+
+
 // DELETE PROJECT - ADMIN
 export const deleteProject = catchAsync(async (req, res) => {
     const { id } = req.params;
@@ -185,6 +221,11 @@ export const deleteProject = catchAsync(async (req, res) => {
 
     if (!project) {
         throw new AppError("Project not found", 404);
+    }
+
+    // Delete project image from Cloudinary
+    if (project.image_public_id) {
+        await deleteFileFromCloudinary(project.image_public_id);
     }
 
     await Project.findByIdAndDelete(id);

@@ -11,13 +11,15 @@ import {
 } from "../controllers/complaint.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 import { Role } from "../types/enum.types";
+import multerFileUploader from "../middlewares/multer.middleware";
 
 const router = express.Router();
+const upload = multerFileUploader();
 
 // Authenticated users
 router.get("/", authenticate(), getAllComplaints);
 router.get("/:id", authenticate(), getComplaintById);
-router.post("/", authenticate(), createComplaint);
+router.post("/", authenticate(),upload.single("image"), createComplaint);
 
 // Admin-only actions
 router.patch(
