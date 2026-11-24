@@ -1,5 +1,10 @@
+
 import { apiFetch } from "@/lib/api";
-import type { Complaint, ComplaintStatus, CreateComplaintInput } from "@/types";
+import type {
+  Complaint,
+  ComplaintStatus,
+  CreateComplaintInput,
+} from "@/types";
 
 /**
  * GET /api/v1/complaints
@@ -13,8 +18,13 @@ export const getComplaint = (id: string) =>
   apiFetch<Complaint>(`/complaints/${id}`);
 
 /** POST /api/v1/complaints */
-export const createComplaint = (input: CreateComplaintInput) =>
-  apiFetch<Complaint>("/complaints", { method: "POST", body: input });
+export const createComplaint = (
+  input: CreateComplaintInput | FormData,
+) =>
+  apiFetch<Complaint>("/complaints", {
+    method: "POST",
+    body: input,
+  });
 
 /** PATCH /api/v1/complaints/:id/department - admin only */
 export const assignDepartment = (id: string, departmentId: string) =>
@@ -30,7 +40,7 @@ export const updateStatus = (id: string, status: ComplaintStatus) =>
     body: { status },
   });
 
-/** PATCH /api/v1/complaints/:id/assign - admin only; the backend also sets status to ASSIGNED */
+/** PATCH /api/v1/complaints/:id/assign - admin only */
 export const assignToUser = (id: string, userId: string) =>
   apiFetch<Complaint>(`/complaints/${id}/assign`, {
     method: "PATCH",

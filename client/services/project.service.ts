@@ -1,3 +1,4 @@
+
 import { apiFetch } from "@/lib/api";
 import type { Project, ProjectInput } from "@/types";
 
@@ -14,7 +15,7 @@ export const getProject = (id: string) =>
   apiFetch<Project>(`/projects/${id}`);
 
 /** POST /api/v1/projects - admin only */
-export const createProject = (input: ProjectInput) =>
+export const createProject = (input: ProjectInput | FormData) =>
   apiFetch<Project>("/projects", {
     method: "POST",
     body: input,
@@ -23,7 +24,7 @@ export const createProject = (input: ProjectInput) =>
 /** PUT /api/v1/projects/:id - admin only */
 export const updateProject = (
   id: string,
-  input: Partial<ProjectInput>,
+  input: Partial<ProjectInput> | FormData,
 ) =>
   apiFetch<Project>(`/projects/${id}`, {
     method: "PUT",

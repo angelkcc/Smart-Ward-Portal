@@ -56,16 +56,29 @@ function readMessage(payload: unknown): string | null {
  * Calls the backend and returns the `data` field of the response envelope.
  * Throws ApiError (with the backend's own message) when the request fails.
  */
+
 export async function apiFetch<T>(
   path: string,
   { method = "GET", body }: RequestOptions = {},
 ): Promise<T> {
   let response: Response;
+
+  // Check whether the request body is FormData
+  const isFormData = body instanceof FormData;
+
   try {
     response = await fetch(`${API_BASE}${path}`, {
       method,
-      headers: body !== undefined ? { "Content-Type": "application/json" } : undefined,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      headers:
+        body !== undefined && !isFormData
+          ? { "Content-Type": "application/json" }
+          : undefined,
+      body:
+        body === undefined
+          ? undefined
+          : isFormData
+            ? body
+            : JSON.stringify(body),
       credentials: "include",
     });
   } catch {
@@ -76,6 +89,7 @@ export async function apiFetch<T>(
   }
 
   let payload: unknown = null;
+
   try {
     payload = await response.json();
   } catch {
@@ -86,10 +100,12 @@ export async function apiFetch<T>(
     if (response.status === 401 && typeof window !== "undefined") {
       window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
     }
+
     const fallback =
       response.status >= 500
         ? "The server is not responding right now. Please try again shortly."
         : `Request failed (${response.status}).`;
+
     throw new ApiError(readMessage(payload) ?? fallback, response.status);
   }
 

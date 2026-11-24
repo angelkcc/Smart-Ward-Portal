@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
@@ -39,6 +40,8 @@ export function ProjectForm({
   const toast = useToast();
 
   const [form, setForm] = useState<ProjectInput>(initialForm);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -58,10 +61,24 @@ export function ProjectForm({
         image_url: project.image_url ?? "",
         published: project.published,
       });
+
+      setImagePreview(project.image_url ?? "");
     } else {
       setForm(initialForm);
+      setImagePreview("");
     }
+
+    setSelectedImage(null);
   }, [project]);
+
+  useEffect(() => {
+    if (!selectedImage) return;
+
+    const previewUrl = URL.createObjectURL(selectedImage);
+    setImagePreview(previewUrl);
+
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [selectedImage]);
 
   function updateField<K extends keyof ProjectInput>(
     field: K,
@@ -71,6 +88,31 @@ export function ProjectForm({
       ...previous,
       [field]: value,
     }));
+  }
+
+  function handleImageChange(
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowedTypes.includes(file.type)) {
+      setSubmitError("Please select a JPG, PNG or WEBP image.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setSubmitError("Image size must be less than 5MB.");
+      event.target.value = "";
+      return;
+    }
+
+    setSubmitError(null);
+    setSelectedImage(file);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -96,21 +138,34 @@ export function ProjectForm({
       return;
     }
 
-    const payload: ProjectInput = {
-      ...form,
-      title: form.title.trim(),
-      description: form.description.trim(),
-      category: form.category.trim(),
-      location: form.location.trim(),
-      budget:
-        form.budget === undefined || form.budget === 0
-          ? undefined
-          : Number(form.budget),
-      start_date: form.start_date || undefined,
-      expected_completion_date:
-        form.expected_completion_date || undefined,
-      image_url: form.image_url?.trim() || undefined,
-    };
+    const payload = new FormData();
+
+    payload.append("title", form.title.trim());
+    payload.append("description", form.description.trim());
+    payload.append("category", form.category.trim());
+    payload.append("location", form.location.trim());
+    payload.append("status", form.status ?? "PLANNED");
+    payload.append("progress", String(form.progress));
+    payload.append("published", String(form.published ?? true));
+
+    if (form.budget !== undefined && form.budget !== 0) {
+      payload.append("budget", String(Number(form.budget)));
+    }
+
+    if (form.start_date) {
+      payload.append("start_date", form.start_date);
+    }
+
+    if (form.expected_completion_date) {
+      payload.append(
+        "expected_completion_date",
+        form.expected_completion_date,
+      );
+    }
+
+    if (selectedImage) {
+      payload.append("image", selectedImage);
+    }
 
     setSubmitting(true);
 
@@ -276,15 +331,32 @@ export function ProjectForm({
 
       <div>
         <label className="mb-1 block text-sm font-semibold text-slate-700">
-          Project image URL
+          Project image
         </label>
+
         <input
-          type="url"
-          value={form.image_url ?? ""}
-          onChange={(e) => updateField("image_url", e.target.value)}
-          placeholder="https://example.com/project-image.jpg"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-blue-600"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={handleImageChange}
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-600"
         />
+
+        <p className="mt-1 text-xs text-slate-500">
+          JPG, PNG or WEBP. Maximum size: 5MB.
+        </p>
+
+        {imagePreview && (
+          <div className="mt-3">
+            <p className="mb-2 text-sm font-medium text-slate-700">
+              Image preview
+            </p>
+            <img
+              src={imagePreview}
+              alt="Project preview"
+              className="h-48 w-full rounded-lg border border-slate-200 object-cover sm:w-72"
+            />
+          </div>
+        )}
       </div>
 
       <label className="flex items-center gap-2 text-sm text-slate-700">
