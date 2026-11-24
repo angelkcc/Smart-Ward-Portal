@@ -1,3 +1,4 @@
+
 "use client";
 
 import { ButtonLink } from "@/components/ui/Button";
@@ -5,26 +6,36 @@ import { Icon } from "@/components/ui/Icon";
 import { Container } from "@/components/ui/Layout";
 import { useI18n } from "@/context/I18nContext";
 
-/** No project data exists in the backend yet, so this is an honest pointer, not a fake list. */
 export function ProjectsStrip() {
   const { t } = useI18n();
+
   return (
-    <section className="pb-14">
+    <section className="bg-slate-50 pb-16 sm:pb-20">
       <Container>
-        <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-900">
-              <Icon name="hammer" className="h-6 w-6" />
+        <div className="flex flex-col gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-5">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-900">
+              <Icon name="hammer" className="h-7 w-7" />
             </span>
-            <div>
-              <h2 className="text-xl font-semibold text-slate-900">
+
+            <div className="max-w-xl">
+              <p className="text-xs font-bold uppercase tracking-widest text-teal-700">
+                Ward development
+              </p>
+
+              <h2 className="mt-2 text-xl font-bold text-slate-900 sm:text-2xl">
                 {t("projects.title")}
               </h2>
-              <p className="text-base text-slate-600">{t("projects.desc")}</p>
+
+              <p className="mt-2 text-sm leading-7 text-slate-600 sm:text-base">
+                {t("projects.desc")}
+              </p>
             </div>
           </div>
-          <ButtonLink href="/projects" variant="secondary">
+
+          <ButtonLink href="/projects" variant="primary" size="lg">
             {t("projects.link")}
+            <Icon name="arrowRight" className="ml-2 h-4 w-4" />
           </ButtonLink>
         </div>
       </Container>

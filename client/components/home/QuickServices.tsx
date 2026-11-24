@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -40,32 +41,45 @@ const ITEMS: Array<{
 
 export function QuickServices() {
   const { t } = useI18n();
+
   return (
-    <section className="py-14">
+    <section className="bg-slate-50 py-16 sm:py-20">
       <Container>
-        <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-          {t("quick.title")}
-        </h2>
-        <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="max-w-2xl">
+          <p className="text-sm font-bold uppercase tracking-widest text-teal-700">
+            Easy access
+          </p>
+          <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            {t("quick.title")}
+          </h2>
+        </div>
+
+        <ul className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {ITEMS.map((item) => (
             <li key={item.href}>
               <Link
                 href={item.href}
-                className="group flex h-full flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
+                className="group flex h-full min-h-64 flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-700"
               >
-                <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-teal-50 text-teal-800">
+                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-900 transition-colors group-hover:bg-blue-900 group-hover:text-white">
                   <Icon name={item.icon} className="h-6 w-6" />
                 </span>
-                <h3 className="mt-4 text-lg font-semibold text-slate-900">
+
+                <h3 className="mt-6 text-lg font-bold text-slate-900">
                   {t(item.title)}
                 </h3>
-                <p className="mt-1 flex-1 text-base text-slate-600">
+
+                <p className="mt-2 flex-1 text-sm leading-7 text-slate-600">
                   {t(item.desc)}
                 </p>
-                <Icon
-                  name="arrowRight"
-                  className="mt-4 h-5 w-5 text-blue-900 transition-transform group-hover:translate-x-1"
-                />
+
+                <div className="mt-5 flex items-center gap-2 text-sm font-bold text-blue-900">
+                  Explore
+                  <Icon
+                    name="arrowRight"
+                    className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                  />
+                </div>
               </Link>
             </li>
           ))}

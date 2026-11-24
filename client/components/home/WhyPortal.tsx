@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Container } from "@/components/ui/Layout";
@@ -18,22 +19,36 @@ const ITEMS: Array<{
 
 export function WhyPortal() {
   const { t } = useI18n();
+
   return (
-    <section className="bg-white py-14">
+    <section className="bg-slate-50 py-16 sm:py-20">
       <Container>
-        <h2 className="max-w-2xl text-3xl font-bold tracking-tight text-slate-900">
-          {t("why.title")}
-        </h2>
-        <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="text-sm font-bold uppercase tracking-widest text-teal-700">
+            Better public services
+          </p>
+          <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            {t("why.title")}
+          </h2>
+        </div>
+
+        <ul className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {ITEMS.map((item) => (
-            <li key={item.title} className="space-y-2">
-              <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50 text-blue-900">
+            <li
+              key={item.title}
+              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+            >
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50 text-teal-800">
                 <Icon name={item.icon} className="h-6 w-6" />
               </span>
-              <h3 className="text-lg font-semibold text-slate-900">
+
+              <h3 className="mt-5 text-lg font-bold text-slate-900">
                 {t(item.title)}
               </h3>
-              <p className="text-base text-slate-600">{t(item.desc)}</p>
+
+              <p className="mt-2 text-sm leading-7 text-slate-600">
+                {t(item.desc)}
+              </p>
             </li>
           ))}
         </ul>
