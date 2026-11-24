@@ -6,6 +6,7 @@ import { DocumentChecklist } from "@/components/services/DocumentChecklist";
 import { LiveDepartments } from "@/components/services/LiveDepartments";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { Container, PageHeader } from "@/components/ui/Layout";
+import Link from "next/link";
 
 const SERVICES: Array<{
   id: string;
@@ -213,40 +214,61 @@ export default function ServicesPage() {
           </div>
         </section>
 
-        {/* Appointment information */}
-        <section className="mt-14">
-          <div className="overflow-hidden rounded-3xl bg-gradient-to-r from-blue-950 to-blue-800 p-7 text-white shadow-lg sm:p-10">
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-              <div className="max-w-2xl">
-                <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-blue-100">
-                  <Icon name="clock" className="h-4 w-4" />
-                  Appointment service
-                </span>
+       
+{/* Appointment information */}
+<section className="mt-14">
+  <div className="overflow-hidden rounded-3xl bg-linear-to-r from-blue-950 to-blue-800 p-7 text-white shadow-lg sm:p-10">
+    <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
+      <div className="max-w-2xl">
+        <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-blue-100">
+          <Icon name="clock" className="h-4 w-4" />
+          Online appointment service
+        </span>
 
-                <h2 className="mt-4 text-2xl font-bold sm:text-3xl">
-                  Plan your visit to the ward office
-                </h2>
+        <h2 className="mt-4 text-2xl font-bold sm:text-3xl">
+          Plan your visit to the ward office
+        </h2>
 
-                <p className="mt-3 text-sm leading-7 text-blue-100 sm:text-base">
-                  We can add an online appointment request system where
-                  residents choose a service, preferred date and time, and
-                  submit their request for ward staff to review.
-                </p>
-              </div>
+        <p className="mt-3 text-sm leading-7 text-blue-100 sm:text-base">
+          Save time by submitting an appointment request online.
+          Choose the service you need, select your preferred date
+          and time, and provide the details of your visit.
+        </p>
 
-              <div className="shrink-0 rounded-xl bg-white/10 p-4 sm:max-w-56">
-                <Icon name="clock" className="h-8 w-8 text-teal-200" />
-                <p className="mt-3 text-sm font-semibold">
-                  Appointment booking is the next feature to implement.
-                </p>
-                <p className="mt-1 text-xs leading-5 text-blue-100">
-                  Requests will need to be connected to the backend before
-                  bookings can be confirmed.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <p className="mt-3 text-sm leading-7 text-blue-100">
+          Your request will be sent to ward staff for review.
+          You can check your appointment status after submitting it.
+        </p>
+      </div>
+
+      <div className="shrink-0 rounded-2xl bg-white/10 p-5 sm:w-60">
+        <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-teal-200">
+          <Icon name="clock" className="h-7 w-7" />
+        </span>
+
+        <h3 className="mt-4 text-lg font-bold">
+          Ready to book?
+        </h3>
+
+        <p className="mt-2 text-sm leading-6 text-blue-100">
+          Submit your appointment application in just a few steps.
+        </p>
+       <Link href="/appointments/new" className="mt-5 flex w-full items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-bold text-blue-950 shadow-sm transition hover:bg-blue-50">
+        Book an Appointment
+       <Icon name="arrowRight" className="ml-2 h-4 w-4" />
+       </Link>
+       <Link href="/appointments" className="mt-3 flex w-full items-center justify-center rounded-xl border border-white/40 px-5 py-3 text-sm font-bold text-white transition hover:bg-white/10">
+       <Icon name="search" className="mr-2 h-4 w-4" />
+        Track My Appointment
+       </Link>
+        <p className="mt-3 text-center text-xs text-blue-200">
+          Login required to submit a request
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
 
         {/* Departments */}
         <section className="mt-16">

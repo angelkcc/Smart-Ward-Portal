@@ -13,6 +13,7 @@ import { cn } from "@/lib/format";
 const ADMIN_NAV: Array<{ href: string; label: string; icon: IconName }> = [
   { href: "/admin", label: "Overview", icon: "grid" },
   { href: "/admin/complaints", label: "Complaints", icon: "chat" },
+  { href: "/admin/appointments", label: "Appointments", icon: "clock" },
   { href: "/admin/departments", label: "Departments", icon: "building" },
   { href: "/admin/notices", label: "Notices", icon: "bell" },
   { href: "/admin/projects", label: "Projects", icon: "document" },

@@ -194,3 +194,46 @@ export interface ProjectInput {
   published?: boolean;
 }
 
+export type AppointmentStatus =
+  | "PENDING"
+  | "APPROVED"
+  | "REJECTED"
+  | "RESCHEDULED";
+
+export type AppointmentService =
+  | "BIRTH_REGISTRATION"
+  | "DEATH_REGISTRATION"
+  | "MARRIAGE_REGISTRATION"
+  | "LAND_OWNERSHIP"
+  | "WARD_RECOMMENDATION"
+  | "OTHER";
+
+export interface AppointmentInput {
+  full_name: string;
+  phone_number: string;
+  service: AppointmentService;
+  preferred_date: string;
+  preferred_time: string;
+  reason: string;
+}
+
+export interface Appointment {
+  _id: string;
+  full_name: string;
+  phone_number: string;
+  service: AppointmentService;
+  preferred_date: string;
+  preferred_time: string;
+  reason: string;
+  status: AppointmentStatus;
+  admin_note?: string;
+  created_by: string | {
+    _id: string;
+    full_name: string;
+    email: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+

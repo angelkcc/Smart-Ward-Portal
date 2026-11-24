@@ -17,7 +17,7 @@ export function Hero() {
   const { t } = useI18n();
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 text-white">
+    <section className="relative overflow-hidden bg-linear-to-br from-blue-950 via-blue-900 to-slate-900 text-white">
       <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-blue-400/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-40 left-1/3 h-96 w-96 rounded-full bg-teal-400/10 blur-3xl" />
 
@@ -51,9 +51,13 @@ export function Hero() {
               <Icon name="chat" className="mr-2 h-4 w-4" />
               {t("hero.cta.complaint")}
             </ButtonLink>
-          </div>
+          
+           {/* Appointment button */}
+          <ButtonLink href="/appointments/new" variant="outlineLight" size="lg">
+           <Icon name="clock" className="mr-2 h-4 w-4" />Book an Appointment
+          </ButtonLink>
         </div>
-
+       </div>
         <div className="rounded-3xl border border-white/15 bg-white p-6 text-slate-900 shadow-2xl shadow-black/20 sm:p-8">
           <div className="flex items-center gap-3">
             <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-900">

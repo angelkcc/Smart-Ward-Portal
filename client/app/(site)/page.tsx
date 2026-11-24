@@ -1,3 +1,4 @@
+import { AppointmentCta } from "@/components/home/AppointmentCta";
 import { ComplaintCta } from "@/components/home/ComplaintCta";
 import { Hero } from "@/components/home/Hero";
 import { HowItWorks } from "@/components/home/HowItWorks";
@@ -6,6 +7,7 @@ import { ProjectsStrip } from "@/components/home/ProjectsStrip";
 import { QuickServices } from "@/components/home/QuickServices";
 import { WhyPortal } from "@/components/home/WhyPortal";
 
+
 export default function HomePage() {
   return (
     <>
@@ -13,6 +15,7 @@ export default function HomePage() {
       <QuickServices />
       <LatestNotices />
       <WhyPortal />
+      <AppointmentCta />
       <HowItWorks />
       <ComplaintCta />
       <ProjectsStrip />
