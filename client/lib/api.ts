@@ -1,16 +1,6 @@
 import type { ApiEnvelope } from "@/types";
 
-/**
- * Base path of the backend API.
- *
- * The backend mounts everything under /api/v1 and does not enable CORS, so by
- * default the browser talks to this Next.js app (same origin) and
- * `next.config.ts` forwards /api/v1/* to the Express server. That keeps the
- * `access_token` cookie working without touching the backend.
- *
- * Only set NEXT_PUBLIC_API_URL if you deliberately point at another origin
- * (the backend would then need CORS enabled for credentials).
- */
+
 const API_BASE = (process.env.NEXT_PUBLIC_BASE_URL ?? "/api/v1").replace(
   /\/$/,
   "",

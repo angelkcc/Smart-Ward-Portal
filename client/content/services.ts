@@ -1,18 +1,6 @@
 import type { IconName } from "@/components/ui/Icon";
 
-/**
- * Service guidance content.
- *
- * ONLY the four department names come from the Ward No. 9 case study. The
- * one-line summaries are deliberately generic. `documents` is empty on
- * purpose: nothing here may be presented as an official requirement until
- * the ward office confirms it. When you have verified checklists from the
- * case-study report, add them below and the Services page will show them.
- *
- *   documents: [
- *     { name: "Citizenship certificate (copy)", note: "Original for checking" },
- *   ],
- */
+
 export interface ServiceDepartment {
   id: string;
   name: string;
